@@ -1,0 +1,31 @@
+Steps for testing and deploying the Docker image:
+
+1. Run the function locally - execute the following command in the directory of the function app:
+	func start -build
+
+2. If there is an error message like:
+	Port 7071 is unavailable. Close the process using that port, or specify another port using --port [-p].
+then execute
+	docker ps
+find the right id, assume it is <id> and execute:
+	docker stop <id>
+Then execute step 1 again.
+
+3. To build the docker image execute:
+	docker build -t process-video-image .
+
+4. To run the image execute:
+	docker run -p 7071:80 process-video-image
+
+5. Now to deploy the image execute:
+	docker tag process-video-image trafficregistry.azurecr.io/process-video
+	docker push trafficregistry.azurecr.io/process-video
+
+6. To log in to the registry in azure do the following:
+in cmd:
+    docker login trafficregistry.azurecr.io
+the username is TrafficRegistry.
+To get the password, in azure:
+    az acr credential show --name TrafficRegistry
+last password:
+    ZwJZg/6wIKXbrSZV2F=fUfI20wcPtxME

@@ -1,9 +1,10 @@
-import logging
-import os
-
-from numpy.lib.function_base import average
 
 import azure.functions as func
+from azure.cosmos import exceptions, CosmosClient, PartitionKey
+import logging
+
+from numpy.lib.function_base import average
+import os
 import cv2
 import dlib
 import time
@@ -16,6 +17,31 @@ carCascade = cv2.CascadeClassifier('myhaar.xml')
 
 WIDTH = 1280
 HEIGHT = 720
+
+
+endpoint = 'https://traffic-storage-account.documents.azure.com:443/'
+key = 'FILLME'
+client = CosmosClient(endpoint, key)
+
+# set all the things needed to query the CosmosDB container
+
+# Create a database
+# <create_database_if_not_exists>
+database_name = 'TrafficInfo'
+database = client.create_database_if_not_exists(id=database_name)
+# </create_database_if_not_exists>
+
+# Create a container
+# Using a good partition key improves the performance of database operations.
+# <create_container_if_not_exists>
+container_name = 'Density'
+container = database.create_container_if_not_exists(
+    id=container_name, 
+    partition_key=PartitionKey(path="/laneId"),
+    offer_throughput=400
+)
+# </create_container_if_not_exists>
+
 
 
 def estimateSpeed(location1, location2):
@@ -173,7 +199,7 @@ def trackMultipleObjects(video):
 	cv2.destroyAllWindows()
 	speed = np.array([item for item in speed if item is not None])
 	logging.info(f"speed = {speed}")
-	return np.mean(speed), carTracker
+	return speed, carTracker
 
 
 def write_to_file(file_output, video_bytes):
@@ -187,11 +213,26 @@ def write_to_file(file_output, video_bytes):
 		out_file.write(video_bytes)
 
 
+# this method updates the num_cars in the item associated with doc_id using
+def upsert_item(container, doc_id, num_cars):
+    logging.info('\n1.6 Upserting an item\n')
+
+    read_item = container.read_item(item=doc_id, partition_key=doc_id) # read_item is a dictionary made from
+	# the json file whose id is doc_id
+
+    read_item['subtotal'] = read_item['subtotal'] + 1 # update the number of upserts
+	read_item['num_cars'] = num_cars # update the number of cars
+    response = container.upsert_item(body=read_item) # write updates to CosmosDB
+
+    logging.info('Upserted Item\'s Id is {0}, new subtotal={1}'.format(response['id'], response['subtotal']))
+
+
 def main(req: func.HttpRequest) -> func.HttpResponse:
 	logging.info('Python HTTP trigger function processed a request.')
 	logging.info(f"files = {req.files}")
 
 	file_output = "videoTest_Trim.mp4"
+	lane_id = req_body.get('lane_id')
 	
 	# video_bytes = req.files.values()[0].stream.read()
 
@@ -204,9 +245,13 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 		if filename == file_output:
 			write_to_file(file_output, contents)
 			video = cv2.VideoCapture(file_output)
-			average_speed, carTracker = trackMultipleObjects(video)
+			speed, carTracker = trackMultipleObjects(video)
+			average_speed = np.mean(speed)
+			moving_cars = np.array([item for item in speed if item > 5])
 			logging.info(f"average speed = {average_speed}")
-			return func.HttpResponse(body=json.dumps({'average_speed': average_speed, "num_cars": len(carTracker), "car_List": list(carTracker.keys())}), status_code=200)
+			num_moving_cars = len(moving_cars)
+			upsert_item(container=container, doc_id=lane_id, num_cars=num_moving_cars) # update the DB
+			return func.HttpResponse(body=json.dumps({'average_speed': average_speed, "num_moving_cars": num_moving_cars}), status_code=200)
 
 
 

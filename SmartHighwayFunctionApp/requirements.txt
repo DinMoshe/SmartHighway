@@ -5,3 +5,5 @@ numpy
 opencv-python
 cmake
 dlib
+azure-cosmos
+signalrcore
