@@ -10,6 +10,13 @@
       "databaseName": "TrafficInfo",
       "collectionName": "Density",
       "createLeaseCollectionIfNotExists": true
+    },
+    {
+      "type": "signalR",
+      "name": "signalRMessages",
+      "hubName": "Lights",
+      "connectionStringSetting": "AzureSignalRConnectionString",
+      "direction": "out"
     }
   ]
 }

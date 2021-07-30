@@ -7,3 +7,4 @@ cmake
 dlib
 azure-cosmos
 signalrcore
+azure-data-tables

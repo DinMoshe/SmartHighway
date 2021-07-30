@@ -3,7 +3,13 @@ import azure.functions as func
 from azure.cosmos import exceptions, CosmosClient, PartitionKey
 from consts import *
 from classes import *
+from azure.data.tables import TableClient
+import json
 
+# Table Storage connection:
+connection_string = "DefaultEndpointsProtocol=https;AccountName=storageaccounttraffafbc;AccountKey=+gMPGEjh1jZOX2G5THqKQJRO2LRN7khLUddPQuilaxkHpmJtOilCd36s/zNY/zDwlseUOIFhqa5snpW/t3r5tw==;EndpointSuffix=core.windows.net"
+
+# Cosmos DB connection
 endpoint = 'https://traffic-storage-account.documents.azure.com:443/'
 key = 'FILLME'
 client = CosmosClient(endpoint, key)
@@ -176,15 +182,22 @@ def calculate_edge_loss(edge):
     return loss
 
 
-# switches the lights according to the loss
+# switches the lights according to the loss. It returns the id of the green traffic light.
 def switch_lights(quantum):
     for edge in road_edges_lst:
         loss = calculate_edge_loss(edge)
         loss_dict[edge.get_traffic_light_id()] += loss
     if loss_dict["t1"] < loss_dict["t2"]:
+        green_light_id = "t1"
+        red_light_id = "t2"
         green_light("t1", quantum)
     else:
+        green_light_id = "t2"
+        red_light_id = "t1"
         green_light("t2", quantum)
+    
+    return green_light_id, red_light_id
+
 
 # print the current stage being executed
 def print_stage(stage):
@@ -195,22 +208,58 @@ def print_stage(stage):
     print()
 
 
-def main(documents: func.DocumentList) -> str:
+def get_curr_time():
+    with TableClient.from_connection_string(connection_string, table_name="TimeCount") as table:
+        # [START get_entity]
+        # Get Entity by partition and row key
+        got_entity = table.get_entity(partition_key="counter", row_key="0")
+        # [END get_entity]
+
+        return got_entity["CurrTime"]
+
+
+def update_curr_time():
+    with TableClient.from_connection_string(connection_string, table_name="TimeCount") as table:
+    # [START get_entity]
+    # Get Entity by partition and row key
+    got_entity = table.get_entity(partition_key="counter", row_key="0")
+    # [END get_entity]
+    
+    # update curr time
+    got_entity["CurrTime"] += 1
+    table.update_entity(mode=UpdateMode.MERGE, entity=got_entity)
+    
+    return curr_time
+
+
+def main(documents: func.DocumentList, signalRMessages: func.Out[str]) -> None:
     # if documents:
     #     logging.info('Document id: %s', documents[0]['id'])
     # else:
     #     logging.info('no documents')
     
+    global CURRENT_TIME
+
     # start the decision process
     init_distribution_dict()
     init_loss_dict()
-    for i in range(100):
-        CURRENT_TIME += 1
+    
+    curr_time = get_curr_time()
+    CURRENT_TIME = curr_time
         
-        add_flow()
-        print_stage("add")
-        redact_rand_flow()
-        print_stage("redact")
+    add_flow()
+    print_stage("add")
+    redact_poisson_flow()
+    print_stage("redact")
 
-        switch_lights(QUANTUM)
-        print_stage("switch")
+    green_light_id, red_light_id = switch_lights(QUANTUM)
+    print_stage("switch")
+
+    update_curr_time()
+
+    signalr_values = {green_light_id: 1, red_light_id: 0}
+    signalRMessages.set(json.dumps({
+        'target': 'newMessage',
+        'arguments': [ values ]
+    }))
+

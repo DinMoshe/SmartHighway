@@ -26,7 +26,6 @@ namespace SimulatedDevice
             Console.WriteLine($"Traffic light id: {trafficLightId}");
             Console.WriteLine();
             
-
             ReceiveCloudMessages();
 
         }
