@@ -1,3 +1,9 @@
+from .consts import *
+import matplotlib.pyplot as plt
+import numpy as np
+from .__init__ import *
+
+
 def get_avg_waiting_time(edge):
     global CURRENT_TIME
     queue = edge.get_occupancy()

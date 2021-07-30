@@ -1,13 +1,16 @@
 import logging
 import azure.functions as func
 from azure.cosmos import exceptions, CosmosClient, PartitionKey
-from consts import *
-from classes import *
-from azure.data.tables import TableClient
+from .consts import *
+from .traffic_classes import *
+from azure.storage.table import TableService
 import json
+import numpy as np
 
 # Table Storage connection:
 connection_string = "DefaultEndpointsProtocol=https;AccountName=storageaccounttraffafbc;AccountKey=+gMPGEjh1jZOX2G5THqKQJRO2LRN7khLUddPQuilaxkHpmJtOilCd36s/zNY/zDwlseUOIFhqa5snpW/t3r5tw==;EndpointSuffix=core.windows.net"
+table_service = TableService(connection_string=connection_string)
+
 
 # Cosmos DB connection
 endpoint = 'https://traffic-storage-account.documents.azure.com:443/'
@@ -89,12 +92,14 @@ def get_succ_edge(edge):
 
 # get the information from the CosmosDB container.
 def extract_num_cars_from_table(lane_id):
-    query = f"SELECT * FROM c WHERE c.laneId = {lane_id}"
+    query = f"""SELECT * FROM c WHERE c.laneId = "{lane_id}" """
 
     items = list(container.query_items(
         query=query,
         enable_cross_partition_query=True
-        ))
+    ))
+    
+    logging.info("items returned from query = {items}")
 
     return int(items[0]["num_cars"])
 
@@ -209,27 +214,15 @@ def print_stage(stage):
 
 
 def get_curr_time():
-    with TableClient.from_connection_string(connection_string, table_name="TimeCount") as table:
-        # [START get_entity]
-        # Get Entity by partition and row key
-        got_entity = table.get_entity(partition_key="counter", row_key="0")
-        # [END get_entity]
-
-        return got_entity["CurrTime"]
+    got_entity = table_service.get_entity(table_name='TimeCount', partition_key="counter", row_key="0")
+    return got_entity['CurrTime']
 
 
 def update_curr_time():
-    with TableClient.from_connection_string(connection_string, table_name="TimeCount") as table:
-    # [START get_entity]
-    # Get Entity by partition and row key
-    got_entity = table.get_entity(partition_key="counter", row_key="0")
-    # [END get_entity]
-    
+    got_entity = table_service.get_entity(table_name='TimeCount', partition_key="counter", row_key="0")
     # update curr time
     got_entity["CurrTime"] += 1
-    table.update_entity(mode=UpdateMode.MERGE, entity=got_entity)
-    
-    return curr_time
+    table_service.update_entity(table_name='TimeCount', entity=got_entity)
 
 
 def main(documents: func.DocumentList, signalRMessages: func.Out[str]) -> None:
@@ -251,15 +244,14 @@ def main(documents: func.DocumentList, signalRMessages: func.Out[str]) -> None:
     print_stage("add")
     redact_poisson_flow()
     print_stage("redact")
-
+    
     green_light_id, red_light_id = switch_lights(QUANTUM)
     print_stage("switch")
-
+    
     update_curr_time()
-
+    
     signalr_values = {green_light_id: 1, red_light_id: 0}
     signalRMessages.set(json.dumps({
         'target': 'newMessage',
-        'arguments': [ values ]
+        'arguments': [ signalr_values ]
     }))
-

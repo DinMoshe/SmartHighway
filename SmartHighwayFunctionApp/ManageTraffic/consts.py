@@ -1,4 +1,4 @@
-from classes import *
+from .traffic_classes import *
 
 MAX_CARS_PER_LANE = 100
 LAST_CAR = 0

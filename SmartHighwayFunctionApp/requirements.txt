@@ -7,4 +7,5 @@ cmake
 dlib
 azure-cosmos
 signalrcore
-azure-data-tables
+matplotlib
+azure-storage

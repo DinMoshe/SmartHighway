@@ -220,11 +220,11 @@ def upsert_item(container, doc_id, num_cars):
     read_item = container.read_item(item=doc_id, partition_key=doc_id) # read_item is a dictionary made from
 	# the json file whose id is doc_id
 
-    read_item['subtotal'] = read_item['subtotal'] + 1 # update the number of upserts
-	read_item['num_cars'] = num_cars # update the number of cars
+    # read_item['subtotal'] = read_item['subtotal'] + 1 # update the number of upserts
+    read_item['num_cars'] = num_cars # update the number of cars
     response = container.upsert_item(body=read_item) # write updates to CosmosDB
 
-    logging.info('Upserted Item\'s Id is {0}, new subtotal={1}'.format(response['id'], response['subtotal']))
+    logging.info('Upserted Item\'s Id is {0}'.format(response['id']))
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
@@ -232,7 +232,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 	logging.info(f"files = {req.files}")
 
 	file_output = "videoTest_Trim.mp4"
-	lane_id = req_body.get('lane_id')
+	# req_body = req.get_json()
+	lane_id = req.params.get('lane_id')
+	logging.info(f"lane_id = {lane_id}")
+
+
+	# lane_id = req_body.get('lane_id')
 	
 	# video_bytes = req.files.values()[0].stream.read()
 
@@ -254,7 +259,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 			return func.HttpResponse(body=json.dumps({'average_speed': average_speed, "num_moving_cars": num_moving_cars}), status_code=200)
 
 
-
+	# these lines don't do anything probably
 	video_param = req.params.get('video')
 	if not video_param:
 		try:
