@@ -20,7 +20,7 @@ HEIGHT = 720
 
 
 endpoint = 'https://traffic-storage-account.documents.azure.com:443/'
-key = 'FILLME'
+key = 'ZLTsOwTzi7K3U4f23RZwlDkUpaRMx2oOAl7E6ArfyOm2MVf8p3U9zCEilMIutV6Er6JykwDlDtq3veRWXHw3gw=='
 client = CosmosClient(endpoint, key)
 
 # set all the things needed to query the CosmosDB container
