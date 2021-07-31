@@ -6,6 +6,8 @@ using Microsoft.Azure.Devices.Client;
 using Newtonsoft.Json;
 using System.Threading;
 using System.IO;
+using Microsoft.AspNetCore.SignalR.Client;
+
 
 namespace SimulatedDevice
 {
@@ -13,61 +15,49 @@ namespace SimulatedDevice
     class Program
     {
 
-        private const string DeviceConnectionString = @"HostName=SkeletonHub.azure-devices.net;DeviceId=MyCDevice;SharedAccessKey=ra3mlKw19PB479r5oOLjQyJQNJcQ6wK2NQVecIt1ptI=";
-
-        private static readonly DeviceClient Client = DeviceClient.CreateFromConnectionString(DeviceConnectionString);
-
-        private static string trafficLightId = "0";
+        private static string trafficLightId = "t1";
         private static int lightState = 0;
+
+        // private static string connectionUrl = "https://skeletonfunctionapp1.azurewebsites.net/api";
+        private static string connectionUrl = "http://localhost:7071/api";
+        private static HubConnection hubConnection;
 
         static async Task Main(string[] args)
         {
 
-            Console.WriteLine($"Traffic light id: {trafficLightId}");
-            Console.WriteLine();
-            
-            ReceiveCloudMessages();
+            hubConnection = new HubConnectionBuilder()
+                            .WithUrl(connectionUrl)
+                            .Build();
 
-        }
+            hubConnection.Closed += async (error) =>
+            {
+                await Task.Delay(new Random().Next(0, 5) * 1000);
+                await hubConnection.StartAsync();
+            };
 
+            hubConnection.On<Dictionary<string, int>>("newMessage", (values) =>
+            {
+                lightState = values[trafficLightId];
+                if (lightState == 0)
+                {  // the traffic light is red
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Red");
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("Green");
+                }
+            });
 
+            await hubConnection.StartAsync();
 
-        private static async void ReceiveCloudMessages()
-        {
-            Message receivedMessage;
             while (true)
             {
-                try
-                {
-                    receivedMessage = await Client.ReceiveAsync();
-                    if (receivedMessage != null)
-                    {
-                        string encodedMessage = Encoding.ASCII.GetString(receivedMessage.GetBytes());
-                        // format of message is a dictionary lightId -> state
-                        var values = JsonConvert.DeserializeObject<Dictionary<string, string>>(encodedMessage);
-                        lightState = int.Parse(values[trafficLightId]);
-                        if (lightState == 0){  // the traffic light is red
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine("Red");
-                        }
-                        else
-                        {
-                            Console.ForegroundColor = ConsoleColor.Green;
-                            Console.WriteLine("Green");
-                        }
 
-                        await Client.CompleteAsync(receivedMessage);
-                    }
-                    else
-                    {
-                        continue;
-                    }
-                }
-                catch{
-                    continue;
-                }
-                
             }
+
         }
+
     }
 }

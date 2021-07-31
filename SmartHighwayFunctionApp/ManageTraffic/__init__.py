@@ -99,7 +99,7 @@ def extract_num_cars_from_table(lane_id):
         enable_cross_partition_query=True
     ))
     
-    logging.info("items returned from query = {items}")
+    logging.info(f"items returned from query = {items}")
 
     return int(items[0]["num_cars"])
 

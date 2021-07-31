@@ -232,7 +232,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 	logging.info(f"files = {req.files}")
 
 	file_output = "videoTest_Trim.mp4"
-	# req_body = req.get_json()
+	
 	lane_id = req.params.get('lane_id')
 	logging.info(f"lane_id = {lane_id}")
 
