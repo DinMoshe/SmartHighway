@@ -231,8 +231,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 	logging.info('Python HTTP trigger function processed a request.')
 	logging.info(f"files = {req.files}")
 
-	file_output = "videoTest_Trim.mp4"
-	
+	file_output_name = "video_to_process.mp4"
+
 	lane_id = req.params.get('lane_id')
 	logging.info(f"lane_id = {lane_id}")
 
@@ -243,23 +243,23 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
 	# write_to_file(file_output=file_output, video_bytes=video_bytes)
 
-	for input_file in req.files.values():
+	for input_file in req.files.values(): # should be only one file
 		filename = input_file.filename
 		contents = input_file.stream.read()
 
-		if filename == file_output:
-			write_to_file(file_output, contents)
-			video = cv2.VideoCapture(file_output)
-			speed, carTracker = trackMultipleObjects(video)
-			average_speed = np.mean(speed)
-			moving_cars = np.array([item for item in speed if item > 5])
-			logging.info(f"average speed = {average_speed}")
-			num_moving_cars = len(moving_cars)
-			upsert_item(container=container, doc_id=lane_id, num_cars=num_moving_cars) # update the DB
-			return func.HttpResponse(body=json.dumps({'average_speed': average_speed, "num_moving_cars": num_moving_cars}), status_code=200)
+		# if filename == file_output:
+		write_to_file(file_output_name, contents)
+		video = cv2.VideoCapture(file_output_name)
+		speed, carTracker = trackMultipleObjects(video)
+		average_speed = np.mean(speed)
+		moving_cars = np.array([item for item in speed if item > 5])
+		logging.info(f"average speed = {average_speed}")
+		num_moving_cars = len(moving_cars)
+		upsert_item(container=container, doc_id=lane_id, num_cars=num_moving_cars) # update the DB
+		return func.HttpResponse(body=json.dumps({'average_speed': average_speed, "num_moving_cars": num_moving_cars}), status_code=200)
 
 
-	# these lines don't do anything probably
+	# these lines probably don't do anything
 	video_param = req.params.get('video')
 	if not video_param:
 		try:
@@ -270,7 +270,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 			video_param = req_body.get('video')  # this is the line that actually extracts the data in our case
 	
 	if video_param:
-		video = cv2.VideoCapture(os.path.join("..", file_output))
+		video = cv2.VideoCapture(os.path.join("..", file_output_name))
 		average_speed = trackMultipleObjects(video)
 		logging.info(f"average speed = {average_speed}")
 		return func.HttpResponse(body={'average_speed': average_speed}, status_code=200)
