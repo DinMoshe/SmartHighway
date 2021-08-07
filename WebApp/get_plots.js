@@ -1,29 +1,22 @@
-// import { BlobServiceClient } from '@azure/storage-blob';
 const { BlobServiceClient } = require("@azure/storage-blob");
+
+const accountName = "storageaccounttraffafbc";
+const containerName = "plots";
 
 async function main() {
     console.log('Azure Blob storage v12 - JavaScript quickstart sample');
-    
+
+
+
+
     // Quick start code goes here
-    const AZURE_STORAGE_CONNECTION_STRING = "DefaultEndpointsProtocol=https;AccountName=storageaccounttraffafbc;AccountKey=+gMPGEjh1jZOX2G5THqKQJRO2LRN7khLUddPQuilaxkHpmJtOilCd36s/zNY/zDwlseUOIFhqa5snpW/t3r5tw==;EndpointSuffix=core.windows.net";
-    
+
+    const blobSasUrl = "https://storageaccounttraffafbc.blob.core.windows.net/?sv=2020-08-04&ss=bfqt&srt=sco&sp=rwdlacupix&se=2021-08-11T22:18:39Z&st=2021-08-07T14:18:39Z&spr=https,http&sig=EeZPm16sfxVvP2KVCWxo0wRxPJoxil0uNq%2F0bhLe2tQ%3D";
     // Create the BlobServiceClient object which will be used to create a container client
-    const blobServiceClient = BlobServiceClient.fromConnectionString(AZURE_STORAGE_CONNECTION_STRING);
-
-    
-    // Create a unique name for the container
-    const containerName = "plots";
-
-    console.log('\nCreating container...');
-    console.log('\t', containerName);
+    const blobServiceClient = new BlobServiceClient(blobSasUrl);
 
     // Get a reference to a container
     const containerClient = blobServiceClient.getContainerClient(containerName);
-
-    // Create the container
-    const createContainerResponse = await containerClient.createIfNotExists();
-    console.log("Container was created successfully. requestId: ", createContainerResponse.requestId);
-
 
     console.log('\nListing blobs...');
 
@@ -38,20 +31,20 @@ async function main() {
         const blobClient = containerClient.getBlobClient(blob.name);
         var uri = blobClient.url;
 
-        var img = new Image();
+        //var img = new Image();
+        //img.src = uri;
 
-        img.src = uri;
+        var img = document.createElement("img");
+        img.setAttribute("src", uri);
+
         divPlots.appendChild(img);
-
-        // const downloadBlockBlobResponse = await blobClient.download(0);
-        // console.log('\nDownloaded blob content...');
-        // console.log('\t', await streamToString(downloadBlockBlobResponse.readableStreamBody));
     }
     
 }
 
 window.onload = function() {
-    var btn = document.getElementById("myButton");
-    btn.onclick = main;
+    // to activate the main through a button, uncomment these
+    // var btn = document.getElementById("myButton");
+    // btn.onclick = main;
+    main();
 }
-// main().then(() => console.log('Done')).catch((ex) => console.log(ex.message));
