@@ -6,6 +6,8 @@ from .traffic_classes import *
 from azure.storage.table import TableService
 import json
 import numpy as np
+from .statistics import *
+
 
 # Table Storage connection:
 connection_string = "DefaultEndpointsProtocol=https;AccountName=storageaccounttraffafbc;AccountKey=+gMPGEjh1jZOX2G5THqKQJRO2LRN7khLUddPQuilaxkHpmJtOilCd36s/zNY/zDwlseUOIFhqa5snpW/t3r5tw==;EndpointSuffix=core.windows.net"
@@ -48,11 +50,6 @@ def insert_cars_into_queue(queue, cars):
     return queue
 
 
-def clean_roads():
-    for edge in road_edges_lst:
-        edge.set_occupancy([])
-
-
 def transfer_cars_q1_to_q2(q1, q2, cars):
     for i in range(cars):
         if len(q1) == 0:
@@ -90,8 +87,8 @@ def get_succ_edge(edge):
     return None
 
 
-# get the information from the CosmosDB container.
-def extract_num_cars_from_table(lane_id):
+# get the information from the CosmosDB container. The number of cars and the occupancy in the lane.
+def extract_data_from_table(lane_id):
     query = f"""SELECT * FROM c WHERE c.laneId = "{lane_id}" """
 
     items = list(container.query_items(
@@ -101,7 +98,27 @@ def extract_num_cars_from_table(lane_id):
     
     logging.info(f"items returned from query = {items}")
 
-    return int(items[0]["num_cars"])
+    lane_object = items[0]
+
+    return int(lane_object["num_moving_cars"]), int(lane_object["num_cars"]) #, json.loads(lane_object["occupancy"])
+
+
+# this method updates the queue of cars in the item associated with doc_id in CosmosDB
+def upsert_queue_in_table(queue, doc_id, container):
+    logging.info('\n1.6 Upserting an item\n')
+
+    read_item = container.read_item(item=doc_id, partition_key=doc_id) # read_item is a dictionary made from
+	# the json file whose id is doc_id
+
+    read_item['occupancy'] = json.dumps(queue) # update the occupancy
+    response = container.upsert_item(body=read_item) # write updates to CosmosDB
+
+    logging.info('Upserted Item\'s Id is {0}'.format(response['id']))
+
+
+# converts a list of dictionaries to a list of Car objects.
+def dicts_to_cars(curr_occupancy):    
+    return [Car(int(car_dict["arrival_time"]), int(car_dict["car_id"])) for car_dict in curr_occupancy]
 
 
 # adds number of cars (flow - by allowed capacity) to the roads entering the intersection
@@ -110,7 +127,13 @@ def add_flow():
     for edge in road_edges_lst:
         if edge.entering_traffic_light():
             lane_id = edge.get_origin() + "_" + edge.get_destination()
-            added_flow = extract_num_cars_from_table(lane_id=lane_id)
+            added_flow, num_cars = extract_data_from_table(lane_id=lane_id)
+
+            # set the occupancy from the table
+            # print(type(curr_occupancy))
+            curr_occupancy = insert_cars_into_queue([], num_cars - added_flow)
+            edge.set_occupancy(curr_occupancy)
+
             edge_flow = len(edge.get_occupancy())
             capacity = edge.get_capacity()
             if (IS_LIMITED_CAPACITY and edge_flow + added_flow <= capacity) or not IS_LIMITED_CAPACITY:
@@ -118,6 +141,9 @@ def add_flow():
             else:
                 added_flow = capacity - edge_flow
                 edge.set_occupancy(insert_cars_into_queue(edge.get_occupancy(), added_flow))
+
+            # update the queue in the table
+            # upsert_queue_in_table(queue=edge.occupancy_to_list_of_dicts(), doc_id=lane_id, container=container)
 
 
 # redacts number of cars (flow - by current flow) from the roads exiting
@@ -213,32 +239,47 @@ def print_stage(stage):
     print()
 
 
-def get_curr_time():
+def get_curr_time_and_id():
     got_entity = table_service.get_entity(table_name='TimeCount', partition_key="counter", row_key="0")
-    return got_entity['CurrTime']
+    return got_entity['CurrTime'], got_entity['LastId']
 
 
-def update_curr_time():
+def update_curr_time_and_id():
     got_entity = table_service.get_entity(table_name='TimeCount', partition_key="counter", row_key="0")
     # update curr time
     got_entity["CurrTime"] += 1
+    got_entity["LastId"] = LAST_CAR + 1
     table_service.update_entity(table_name='TimeCount', entity=got_entity)
+
+
+# return a dictionary mapping between the lane id to the number of cars in it
+def get_occupancy_dicts():
+    num_car_dict = dict()
+    for edge in road_edges_lst:
+        if edge.entering_traffic_light():
+            lane_id = edge.get_origin() + "_" + edge.get_destination()
+            num_car_dict[lane_id] = len(edge.get_occupancy())
+
+    return num_car_dict
 
 
 def main(documents: func.DocumentList, signalRMessages: func.Out[str]) -> None:
     # if documents:
     #     logging.info('Document id: %s', documents[0]['id'])
+    #     logging.info(documents[0])
+    #     return
     # else:
     #     logging.info('no documents')
-    
+
     global CURRENT_TIME
+    global LAST_CAR
 
     # start the decision process
     init_distribution_dict()
     init_loss_dict()
     
-    curr_time = get_curr_time()
-    CURRENT_TIME = curr_time
+    curr_time, last_id = get_curr_time_and_id()
+    CURRENT_TIME, LAST_CAR = curr_time, last_id
         
     add_flow()
     print_stage("add")
@@ -248,7 +289,12 @@ def main(documents: func.DocumentList, signalRMessages: func.Out[str]) -> None:
     green_light_id, red_light_id = switch_lights(QUANTUM)
     print_stage("switch")
     
-    update_curr_time()
+    update_curr_time_and_id()
+    
+    # create plots of the occupancy and density
+    num_car_dict = get_occupancy_dicts()
+    create_plots(num_car_dict)
+    send_images()
     
     signalr_values = {green_light_id: 1, red_light_id: 0}
     signalRMessages.set(json.dumps({

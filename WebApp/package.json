@@ -1,0 +1,24 @@
+{
+  "name": "WebApp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "get_plots.js",
+  "dependencies": {
+    "@azure/storage-blob": "^12.7.0"
+  },
+  "devDependencies": {
+    "parcel-bundler": "^1.12.5"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "type": "module",
+  "license": "ISC",
+  "browserslist": [
+    "last 1 Edge version",
+    "last 1 Chrome version",
+    "last 1 Firefox version"
+  ]
+}

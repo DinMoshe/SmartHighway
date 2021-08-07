@@ -15,6 +15,9 @@ class Car:
     def get_arrival_time(self):
         return self.arrival_time
 
+    def car_to_dict(self):
+        return {"arrival_time": self.arrival_time, "car_id": self.id}
+
 
 class Road:
     def __init__(self, origin, destination, capacity):
@@ -56,6 +59,9 @@ class Road:
     def remove_cars_from_road(self, num_cars):
         for i in range(num_cars):
             self.occupancy.pop(0)
+
+    def occupancy_to_list_of_dicts(self):
+        return [car.car_to_dict() for car in self.occupancy]
 
 
 # Use when we have multiple types of intersections

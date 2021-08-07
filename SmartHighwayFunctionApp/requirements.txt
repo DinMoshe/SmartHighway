@@ -9,3 +9,4 @@ azure-cosmos
 signalrcore
 matplotlib
 azure-storage
+azure-storage-blob

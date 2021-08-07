@@ -214,17 +214,18 @@ def write_to_file(file_output, video_bytes):
 
 
 # this method updates the num_cars in the item associated with doc_id using
-def upsert_item(container, doc_id, num_cars):
-    logging.info('\n1.6 Upserting an item\n')
+def upsert_item(container, doc_id, num_moving_cars, num_cars):
+	logging.info('\n1.6 Upserting an item\n')
 
-    read_item = container.read_item(item=doc_id, partition_key=doc_id) # read_item is a dictionary made from
+	read_item = container.read_item(item=doc_id, partition_key=doc_id) # read_item is a dictionary made from
 	# the json file whose id is doc_id
 
-    # read_item['subtotal'] = read_item['subtotal'] + 1 # update the number of upserts
-    read_item['num_cars'] = num_cars # update the number of cars
-    response = container.upsert_item(body=read_item) # write updates to CosmosDB
+	# read_item['subtotal'] = read_item['subtotal'] + 1 # update the number of upserts
+	read_item['num_moving_cars'] = num_moving_cars
+	read_item['num_cars'] = num_cars # update the number of cars
+	response = container.upsert_item(body=read_item) # write updates to CosmosDB
 
-    logging.info('Upserted Item\'s Id is {0}'.format(response['id']))
+	logging.info('Upserted Item\'s Id is {0}'.format(response['id']))
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
@@ -255,8 +256,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 		moving_cars = np.array([item for item in speed if item > 5])
 		logging.info(f"average speed = {average_speed}")
 		num_moving_cars = len(moving_cars)
-		upsert_item(container=container, doc_id=lane_id, num_cars=num_moving_cars) # update the DB
-		return func.HttpResponse(body=json.dumps({'average_speed': average_speed, "num_moving_cars": num_moving_cars}), status_code=200)
+		num_cars = len(speed)
+		upsert_item(container=container, doc_id=lane_id, num_moving_cars=num_moving_cars, num_cars=num_cars) # update the DB
+		return func.HttpResponse(body=json.dumps({'average_speed': average_speed, "num_moving_cars": num_moving_cars, "num_cars": num_cars}), status_code=200)
 
 
 	# these lines probably don't do anything
