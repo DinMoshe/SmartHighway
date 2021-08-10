@@ -149,9 +149,7 @@ var __extends = void 0 && (void 0).__extends || function () {
 /** Error thrown when an HTTP request fails. */
 
 
-var HttpError =
-/** @class */
-function (_super) {
+var HttpError = function (_super) {
   __extends(HttpError, _super);
   /** Constructs a new instance of {@link @microsoft/signalr.HttpError}.
    *
@@ -180,9 +178,7 @@ function (_super) {
 exports.HttpError = HttpError;
 
 /** Error thrown when a timeout elapses. */
-var TimeoutError =
-/** @class */
-function (_super) {
+var TimeoutError = function (_super) {
   __extends(TimeoutError, _super);
   /** Constructs a new instance of {@link @microsoft/signalr.TimeoutError}.
    *
@@ -213,9 +209,7 @@ function (_super) {
 exports.TimeoutError = TimeoutError;
 
 /** Error thrown when an action is aborted. */
-var AbortError =
-/** @class */
-function (_super) {
+var AbortError = function (_super) {
   __extends(AbortError, _super);
   /** Constructs a new instance of {@link AbortError}.
    *
@@ -266,9 +260,7 @@ var __assign = void 0 && (void 0).__assign || Object.assign || function (t) {
 /** Represents an HTTP response. */
 
 
-var HttpResponse =
-/** @class */
-function () {
+var HttpResponse = function () {
   function HttpResponse(statusCode, statusText, content) {
     this.statusCode = statusCode;
     this.statusText = statusText;
@@ -284,9 +276,7 @@ exports.HttpResponse = HttpResponse;
  *
  * This class provides an abstraction over an HTTP client so that a different implementation can be provided on different platforms.
  */
-var HttpClient =
-/** @class */
-function () {
+var HttpClient = function () {
   function HttpClient() {}
 
   HttpClient.prototype.get = function (url, options) {
@@ -377,9 +367,7 @@ exports.NullLogger = void 0;
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 /** A logger that does nothing when log messages are sent to it. */
-var NullLogger =
-/** @class */
-function () {
+var NullLogger = function () {
   function NullLogger() {}
   /** @inheritDoc */
   // tslint:disable-next-line
@@ -775,14 +763,12 @@ var __generator = void 0 && (void 0).__generator || function (thisArg, body) {
 // Version token that will be replaced by the prepack command
 
 /** The version of the SignalR client. */
-var VERSION = "5.0.8";
+var VERSION = "5.0.9";
 /** @private */
 
 exports.VERSION = VERSION;
 
-var Arg =
-/** @class */
-function () {
+var Arg = function () {
   function Arg() {}
 
   Arg.isRequired = function (val, name) {
@@ -810,9 +796,7 @@ function () {
 exports.Arg = Arg;
 
 /** @private */
-var Platform =
-/** @class */
-function () {
+var Platform = function () {
   function Platform() {}
 
   Object.defineProperty(Platform, "isBrowser", {
@@ -880,8 +864,7 @@ function formatArrayBuffer(data) {
 
 
 function isArrayBuffer(val) {
-  return val && typeof ArrayBuffer !== "undefined" && (val instanceof ArrayBuffer || // Sometimes we get an ArrayBuffer that doesn't satisfy instanceof
-  val.constructor && val.constructor.name === "ArrayBuffer");
+  return val && typeof ArrayBuffer !== "undefined" && (val instanceof ArrayBuffer || val.constructor && val.constructor.name === "ArrayBuffer");
 }
 /** @private */
 
@@ -955,9 +938,7 @@ function createLogger(logger) {
 /** @private */
 
 
-var SubjectSubscription =
-/** @class */
-function () {
+var SubjectSubscription = function () {
   function SubjectSubscription(subject, observer) {
     this.subject = subject;
     this.observer = observer;
@@ -981,9 +962,7 @@ function () {
 exports.SubjectSubscription = SubjectSubscription;
 
 /** @private */
-var ConsoleLogger =
-/** @class */
-function () {
+var ConsoleLogger = function () {
   function ConsoleLogger(minimumLogLevel) {
     this.minimumLogLevel = minimumLogLevel;
     this.outputConsole = console;
@@ -1276,9 +1255,7 @@ var __generator = void 0 && (void 0).__generator || function (thisArg, body) {
   }
 };
 
-var FetchHttpClient =
-/** @class */
-function (_super) {
+var FetchHttpClient = function (_super) {
   __extends(FetchHttpClient, _super);
 
   function FetchHttpClient(logger) {
@@ -1500,9 +1477,7 @@ var __extends = void 0 && (void 0).__extends || function () {
   };
 }();
 
-var XhrHttpClient =
-/** @class */
-function (_super) {
+var XhrHttpClient = function (_super) {
   __extends(XhrHttpClient, _super);
 
   function XhrHttpClient(logger) {
@@ -1633,9 +1608,7 @@ var __extends = void 0 && (void 0).__extends || function () {
 }();
 
 /** Default implementation of {@link @microsoft/signalr.HttpClient}. */
-var DefaultHttpClient =
-/** @class */
-function (_super) {
+var DefaultHttpClient = function (_super) {
   __extends(DefaultHttpClient, _super);
   /** Creates a new instance of the {@link @microsoft/signalr.DefaultHttpClient}, using the provided {@link @microsoft/signalr.ILogger} to log messages. */
 
@@ -1694,9 +1667,7 @@ exports.TextMessageFormat = void 0;
 // Not exported from index
 
 /** @private */
-var TextMessageFormat =
-/** @class */
-function () {
+var TextMessageFormat = function () {
   function TextMessageFormat() {}
 
   TextMessageFormat.write = function (output) {
@@ -1965,7 +1936,7 @@ module.exports = Array.isArray || function (arr) {
   return toString.call(arr) == '[object Array]';
 };
 
-},{}],"node_modules/buffer/index.js":[function(require,module,exports) {
+},{}],"node_modules/node-libs-browser/node_modules/buffer/index.js":[function(require,module,exports) {
 
 var global = arguments[3];
 /*!
@@ -3758,7 +3729,7 @@ function isnan (val) {
   return val !== val // eslint-disable-line no-self-compare
 }
 
-},{"base64-js":"node_modules/base64-js/index.js","ieee754":"node_modules/ieee754/index.js","isarray":"node_modules/isarray/index.js","buffer":"node_modules/buffer/index.js"}],"node_modules/@microsoft/signalr/dist/esm/HandshakeProtocol.js":[function(require,module,exports) {
+},{"base64-js":"node_modules/base64-js/index.js","ieee754":"node_modules/ieee754/index.js","isarray":"node_modules/isarray/index.js","buffer":"node_modules/node-libs-browser/node_modules/buffer/index.js"}],"node_modules/@microsoft/signalr/dist/esm/HandshakeProtocol.js":[function(require,module,exports) {
 var Buffer = require("buffer").Buffer;
 "use strict";
 
@@ -3775,9 +3746,7 @@ var _Utils = require("./Utils");
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 /** @private */
-var HandshakeProtocol =
-/** @class */
-function () {
+var HandshakeProtocol = function () {
   function HandshakeProtocol() {} // Handshake request is always JSON
 
 
@@ -3838,7 +3807,7 @@ function () {
 }();
 
 exports.HandshakeProtocol = HandshakeProtocol;
-},{"./TextMessageFormat":"node_modules/@microsoft/signalr/dist/esm/TextMessageFormat.js","./Utils":"node_modules/@microsoft/signalr/dist/esm/Utils.js","buffer":"node_modules/buffer/index.js"}],"node_modules/@microsoft/signalr/dist/esm/IHubProtocol.js":[function(require,module,exports) {
+},{"./TextMessageFormat":"node_modules/@microsoft/signalr/dist/esm/TextMessageFormat.js","./Utils":"node_modules/@microsoft/signalr/dist/esm/Utils.js","buffer":"node_modules/node-libs-browser/node_modules/buffer/index.js"}],"node_modules/@microsoft/signalr/dist/esm/IHubProtocol.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3888,9 +3857,7 @@ var _Utils = require("./Utils");
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 /** Stream implementation to stream items to the server. */
-var Subject =
-/** @class */
-function () {
+var Subject = function () {
   function Subject() {
     this.observers = [];
   }
@@ -4114,9 +4081,7 @@ exports.HubConnectionState = HubConnectionState;
 /** Represents a connection to a SignalR Hub. */
 
 
-var HubConnection =
-/** @class */
-function () {
+var HubConnection = function () {
   function HubConnection(connection, logger, protocol, reconnectPolicy) {
     var _this = this;
 
@@ -5300,9 +5265,7 @@ exports.DefaultReconnectPolicy = void 0;
 var DEFAULT_RETRY_DELAYS_IN_MILLISECONDS = [0, 2000, 10000, 30000, null];
 /** @private */
 
-var DefaultReconnectPolicy =
-/** @class */
-function () {
+var DefaultReconnectPolicy = function () {
   function DefaultReconnectPolicy(retryDelays) {
     this.retryDelays = retryDelays !== undefined ? retryDelays.concat([null]) : DEFAULT_RETRY_DELAYS_IN_MILLISECONDS;
   }
@@ -5372,9 +5335,7 @@ exports.AbortController = void 0;
 // Not exported from index.
 
 /** @private */
-var AbortController =
-/** @class */
-function () {
+var AbortController = function () {
   function AbortController() {
     this.isAborted = false;
     this.onabort = null;
@@ -5578,9 +5539,7 @@ var __generator = void 0 && (void 0).__generator || function (thisArg, body) {
 // Not exported from 'index', this type is internal.
 
 /** @private */
-var LongPollingTransport =
-/** @class */
-function () {
+var LongPollingTransport = function () {
   function LongPollingTransport(httpClient, accessTokenFactory, logger, logMessageContent, withCredentials, headers) {
     this.httpClient = httpClient;
     this.accessTokenFactory = accessTokenFactory;
@@ -6093,9 +6052,7 @@ var __generator = void 0 && (void 0).__generator || function (thisArg, body) {
 };
 
 /** @private */
-var ServerSentEventsTransport =
-/** @class */
-function () {
+var ServerSentEventsTransport = function () {
   function ServerSentEventsTransport(httpClient, accessTokenFactory, logger, logMessageContent, eventSourceConstructor, withCredentials, headers) {
     this.httpClient = httpClient;
     this.accessTokenFactory = accessTokenFactory;
@@ -6419,9 +6376,7 @@ var __generator = void 0 && (void 0).__generator || function (thisArg, body) {
 };
 
 /** @private */
-var WebSocketTransport =
-/** @class */
-function () {
+var WebSocketTransport = function () {
   function WebSocketTransport(httpClient, accessTokenFactory, logger, logMessageContent, webSocketConstructor, headers) {
     this.logger = logger;
     this.accessTokenFactory = accessTokenFactory;
@@ -6791,9 +6746,7 @@ var __generator = void 0 && (void 0).__generator || function (thisArg, body) {
 var MAX_REDIRECTS = 100;
 /** @private */
 
-var HttpConnection =
-/** @class */
-function () {
+var HttpConnection = function () {
   function HttpConnection(url, options) {
     if (options === void 0) {
       options = {};
@@ -6869,10 +6822,10 @@ function () {
             if (this.connectionState !== "Disconnected"
             /* Disconnected */
             ) {
-                return [2
-                /*return*/
-                , Promise.reject(new Error("Cannot start an HttpConnection that is not in the 'Disconnected' state."))];
-              }
+              return [2
+              /*return*/
+              , Promise.reject(new Error("Cannot start an HttpConnection that is not in the 'Disconnected' state."))];
+            }
 
             this.connectionState = "Connecting"
             /* Connecting */
@@ -6888,8 +6841,8 @@ function () {
             if (!(this.connectionState === "Disconnecting"
             /* Disconnecting */
             )) return [3
-              /*break*/
-              , 3];
+            /*break*/
+            , 3];
             message = "Failed to start the HttpConnection before stop() was called.";
             this.logger.log(_ILogger.LogLevel.Error, message); // We cannot await stopPromise inside startInternal since stopInternal awaits the startInternalPromise.
 
@@ -6909,12 +6862,12 @@ function () {
             if (this.connectionState !== "Connected"
             /* Connected */
             ) {
-                message = "HttpConnection.startInternal completed gracefully but didn't enter the connection into the connected state!";
-                this.logger.log(_ILogger.LogLevel.Error, message);
-                return [2
-                /*return*/
-                , Promise.reject(new Error(message))];
-              }
+              message = "HttpConnection.startInternal completed gracefully but didn't enter the connection into the connected state!";
+              this.logger.log(_ILogger.LogLevel.Error, message);
+              return [2
+              /*return*/
+              , Promise.reject(new Error(message))];
+            }
 
             _a.label = 4;
 
@@ -6932,8 +6885,8 @@ function () {
     if (this.connectionState !== "Connected"
     /* Connected */
     ) {
-        return Promise.reject(new Error("Cannot send data if the connection is not in the 'Connected' State."));
-      }
+      return Promise.reject(new Error("Cannot send data if the connection is not in the 'Connected' State."));
+    }
 
     if (!this.sendQueue) {
       this.sendQueue = new TransportSendQueue(this.transport);
@@ -6953,20 +6906,20 @@ function () {
             if (this.connectionState === "Disconnected"
             /* Disconnected */
             ) {
-                this.logger.log(_ILogger.LogLevel.Debug, "Call to HttpConnection.stop(" + error + ") ignored because the connection is already in the disconnected state.");
-                return [2
-                /*return*/
-                , Promise.resolve()];
-              }
+              this.logger.log(_ILogger.LogLevel.Debug, "Call to HttpConnection.stop(" + error + ") ignored because the connection is already in the disconnected state.");
+              return [2
+              /*return*/
+              , Promise.resolve()];
+            }
 
             if (this.connectionState === "Disconnecting"
             /* Disconnecting */
             ) {
-                this.logger.log(_ILogger.LogLevel.Debug, "Call to HttpConnection.stop(" + error + ") ignored because the connection is already in the disconnecting state.");
-                return [2
-                /*return*/
-                , this.stopPromise];
-              }
+              this.logger.log(_ILogger.LogLevel.Debug, "Call to HttpConnection.stop(" + error + ") ignored because the connection is already in the disconnecting state.");
+              return [2
+              /*return*/
+              , this.stopPromise];
+            }
 
             this.connectionState = "Disconnecting"
             /* Disconnecting */
@@ -7144,8 +7097,8 @@ function () {
                     || this_1.connectionState === "Disconnected"
                     /* Disconnected */
                     ) {
-                        throw new Error("The connection was stopped during negotiation.");
-                      }
+                      throw new Error("The connection was stopped during negotiation.");
+                    }
 
                     if (negotiateResponse.error) {
                       throw new Error(negotiateResponse.error);
@@ -7216,13 +7169,13 @@ function () {
             if (this.connectionState === "Connecting"
             /* Connecting */
             ) {
-                // Ensure the connection transitions to the connected state prior to completing this.startInternalPromise.
-                // start() will handle the case when stop was called and startInternal exits still in the disconnecting state.
-                this.logger.log(_ILogger.LogLevel.Debug, "The HttpConnection connected successfully.");
-                this.connectionState = "Connected"
-                /* Connected */
-                ;
-              }
+              // Ensure the connection transitions to the connected state prior to completing this.startInternalPromise.
+              // start() will handle the case when stop was called and startInternal exits still in the disconnecting state.
+              this.logger.log(_ILogger.LogLevel.Debug, "The HttpConnection connected successfully.");
+              this.connectionState = "Connected"
+              /* Connected */
+              ;
+            }
 
             return [3
             /*break*/
@@ -7441,12 +7394,12 @@ function () {
             if (this.connectionState !== "Connecting"
             /* Connecting */
             ) {
-                message = "Failed to select transport before stop() was called.";
-                this.logger.log(_ILogger.LogLevel.Debug, message);
-                return [2
-                /*return*/
-                , Promise.reject(new Error(message))];
-              }
+              message = "Failed to select transport before stop() was called.";
+              this.logger.log(_ILogger.LogLevel.Debug, message);
+              return [2
+              /*return*/
+              , Promise.reject(new Error(message))];
+            }
 
             return [3
             /*break*/
@@ -7561,24 +7514,24 @@ function () {
     if (this.connectionState === "Disconnected"
     /* Disconnected */
     ) {
-        this.logger.log(_ILogger.LogLevel.Debug, "Call to HttpConnection.stopConnection(" + error + ") was ignored because the connection is already in the disconnected state.");
-        return;
-      }
+      this.logger.log(_ILogger.LogLevel.Debug, "Call to HttpConnection.stopConnection(" + error + ") was ignored because the connection is already in the disconnected state.");
+      return;
+    }
 
     if (this.connectionState === "Connecting"
     /* Connecting */
     ) {
-        this.logger.log(_ILogger.LogLevel.Warning, "Call to HttpConnection.stopConnection(" + error + ") was ignored because the connection is still in the connecting state.");
-        throw new Error("HttpConnection.stopConnection(" + error + ") was called while the connection is still in the connecting state.");
-      }
+      this.logger.log(_ILogger.LogLevel.Warning, "Call to HttpConnection.stopConnection(" + error + ") was ignored because the connection is still in the connecting state.");
+      throw new Error("HttpConnection.stopConnection(" + error + ") was called while the connection is still in the connecting state.");
+    }
 
     if (this.connectionState === "Disconnecting"
     /* Disconnecting */
     ) {
-        // A call to stop() induced this call to stopConnection and needs to be completed.
-        // Any stop() awaiters will be scheduled to continue after the onclose callback fires.
-        this.stopPromiseResolver();
-      }
+      // A call to stop() induced this call to stopConnection and needs to be completed.
+      // Any stop() awaiters will be scheduled to continue after the onclose callback fires.
+      this.stopPromiseResolver();
+    }
 
     if (error) {
       this.logger.log(_ILogger.LogLevel.Error, "Connection disconnected with error '" + error + "'.");
@@ -7662,9 +7615,7 @@ function transportMatches(requestedTransport, actualTransport) {
 /** @private */
 
 
-var TransportSendQueue =
-/** @class */
-function () {
+var TransportSendQueue = function () {
   function TransportSendQueue(transport) {
     this.transport = transport;
     this.buffer = [];
@@ -7791,9 +7742,7 @@ function () {
 
 exports.TransportSendQueue = TransportSendQueue;
 
-var PromiseSource =
-/** @class */
-function () {
+var PromiseSource = function () {
   function PromiseSource() {
     var _this = this;
 
@@ -7837,9 +7786,7 @@ var _TextMessageFormat = require("./TextMessageFormat");
 var JSON_HUB_PROTOCOL_NAME = "json";
 /** Implements the JSON Hub Protocol. */
 
-var JsonHubProtocol =
-/** @class */
-function () {
+var JsonHubProtocol = function () {
   function JsonHubProtocol() {
     /** @inheritDoc */
     this.name = JSON_HUB_PROTOCOL_NAME;
@@ -8027,9 +7974,7 @@ function parseLogLevel(name) {
 /** A builder for configuring {@link @microsoft/signalr.HubConnection} instances. */
 
 
-var HubConnectionBuilder =
-/** @class */
-function () {
+var HubConnectionBuilder = function () {
   function HubConnectionBuilder() {}
 
   HubConnectionBuilder.prototype.configureLogging = function (logging) {
@@ -8269,16 +8214,32 @@ function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && 
 
 const negotiateUrl = "http://localhost:7071/api"; // const negotiateUrl = "https://smarthighwayfunctionapp.azurewebsites.net/api";
 
-const connection = new signalR.HubConnectionBuilder().withUrl(`${negotiateUrl}`) // .withAutomaticReconnect()
-.configureLogging(signalR.LogLevel.Information).build();
+const lights = {
+  "t1": ["north", "south"],
+  "t2": ["west", "east"]
+};
+const state_to_color = {
+  0: "Red",
+  1: "Green"
+};
+const laneIds = ["north_t1", "south_t1", "east_t2", "west_t2"];
+const laneNames = {
+  "east_t2": "East to West",
+  "west_t2": "West to East",
+  "north_t1": "North to South",
+  "south_t1": "South to North"
+};
+const connection = new signalR.HubConnectionBuilder().withUrl(`${negotiateUrl}`).withAutomaticReconnect().configureLogging(signalR.LogLevel.Information).build();
 
 async function start() {
   try {
     await connection.start();
+    console.assert(connection.state === signalR.HubConnectionState.Connected);
     console.log("SignalR Connected.");
   } catch (err) {
+    console.assert(connection.state === signalR.HubConnectionState.Disconnected);
     console.log(err);
-    setTimeout(start, 5000);
+    setTimeout(() => start(), 5000);
   }
 }
 
@@ -8287,28 +8248,22 @@ connection.onclose(async () => {
   await start();
 });
 connection.on("newMessage", (values, numCarsDict) => {
-  var lights = {
-    "t1": ["north", "south"],
-    "t2": ["south, east"]
-  };
-  var state_to_color = {
-    0: "Red",
-    1: "Green"
-  };
-  var laneNames = {
-    "east_t2": "East to West",
-    "west_t2": "West to East",
-    "north_t1": "North to South",
-    "south_t1": "South to North"
-  };
-
   for (const [lightId, directions] of Object.entries(lights)) {
-    for (var i = 0; i < xs.length; i++) {
+    for (var i = 0; i < directions.length; i++) {
       var direction = directions[i];
       var lightElem = document.getElementById(`light_${direction}_${lightId}`);
+
+      if (typeof Storage != "undefined") {
+        localStorage.setItem(`light_${direction}_${lightId}`, state_to_color[values[lightId]]);
+      }
+
       var oppositeDirection = directions[1 - i];
       var content = document.createTextNode(`${direction} to ${oppositeDirection} is ${state_to_color[values[lightId]]}`);
-      lightElem.innerHTML = ``;
+
+      if (lightElem.innerHTML != null) {
+        lightElem.innerHTML = ``;
+      }
+
       var fontElem = document.createElement("font");
       fontElem.appendChild(content);
       fontElem.setAttribute("color", state_to_color[values[lightId]].toLowerCase());
@@ -8328,25 +8283,93 @@ connection.on("newMessage", (values, numCarsDict) => {
 
   for (const [laneId, numCars] of Object.entries(numCarsDict)) {
     laneElem = laneDiv.querySelector(`#${laneId}`);
-    laneElem.s;
 
     if (laneElem == null) {
       laneElem = document.createElement("h2");
       laneElem.setAttribute("id", laneId);
       laneDiv.appendChild(laneElem);
     } else {
-      laneElem.innerHTML = ``;
+      if (laneElem.innerHTML != null) {
+        laneElem.innerHTML = ``;
+      }
+    }
+
+    if (typeof Storage != "undefined") {
+      localStorage.setItem(laneId, numCars);
     }
 
     laneElem.setAttribute("class", "lane_info");
-    laneElem.setAttribute("color");
     laneElem.appendChild(document.createTextNode(`${laneNames[laneId]}\n${numCars} 🚗`));
   }
 });
 
+function loadPreviousData() {
+  if (typeof Storage == "undefined") {
+    console.log("localStorage is not supported");
+    return;
+  }
+
+  console.log("localStorage is supported!");
+
+  for (const [lightId, directions] of Object.entries(lights)) {
+    for (var i = 0; i < directions.length; i++) {
+      var direction = directions[i];
+      var color = localStorage.getItem(`light_${direction}_${lightId}`);
+
+      if (color == null) {
+        // was not previously stored
+        console.log(`color is not stored for light_${direction}_${lightId}`);
+        continue;
+      }
+
+      var direction = directions[i];
+      var lightElem = document.getElementById(`light_${direction}_${lightId}`);
+      console.log(`lightElem = ${lightElem}, light_${direction}_${lightId}`);
+      var oppositeDirection = directions[1 - i];
+      var content = document.createTextNode(`${direction} to ${oppositeDirection} is ${color}`);
+
+      if (lightElem.innerHTML != null) {
+        lightElem.innerHTML = ``;
+      }
+
+      var fontElem = document.createElement("font");
+      fontElem.appendChild(content);
+      fontElem.setAttribute("color", color.toLowerCase());
+      lightElem.appendChild(fontElem);
+    }
+  }
+
+  var laneDiv = document.getElementById("lanes");
+
+  for (const laneId of laneIds) {
+    var numCars = localStorage.getItem(laneId);
+
+    if (numCars == null) {
+      // was not previously stored
+      continue;
+    }
+
+    laneElem = laneDiv.querySelector(`#${laneId}`);
+
+    if (laneElem == null) {
+      laneElem = document.createElement("h2");
+      laneElem.setAttribute("id", laneId);
+      laneDiv.appendChild(laneElem);
+    } else {
+      if (laneElem.innerHTML != null) {
+        laneElem.innerHTML = ``;
+      }
+    }
+
+    laneElem.setAttribute("class", "lane_info");
+    laneElem.appendChild(document.createTextNode(`${laneNames[laneId]}\n${numCars} 🚗`));
+  }
+}
+
 async function main() {
   // start the signalR connection
   start();
+  loadPreviousData();
 }
 
 function simulate() {
@@ -8393,7 +8416,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52249" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52591" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
@@ -8424,8 +8447,9 @@ if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
         assetsToAccept.forEach(function (v) {
           hmrAcceptRun(v[0], v[1]);
         });
-      } else {
-        window.location.reload();
+      } else if (location.reload) {
+        // `location` global exists in a web worker context but lacks `.reload()` function.
+        location.reload();
       }
     }
 

@@ -2,21 +2,27 @@ import * as signalR from "@microsoft/signalr";
 
 const negotiateUrl = "http://localhost:7071/api";
 // const negotiateUrl = "https://smarthighwayfunctionapp.azurewebsites.net/api";
+const lights = {"t1": ["north", "south"], "t2": ["west", "east"]};
+const state_to_color = {0: "Red", 1:"Green"};
+const laneIds = ["north_t1", "south_t1", "east_t2", "west_t2"];
+const laneNames = {"east_t2": "East to West", "west_t2": "West to East",
+                    "north_t1": "North to South", "south_t1": "South to North"};
 
 const connection = new signalR.HubConnectionBuilder()
     .withUrl(`${negotiateUrl}`)
-    // .withAutomaticReconnect()
+    .withAutomaticReconnect()
     .configureLogging(signalR.LogLevel.Information)
     .build();
-
 
 async function start() {
     try {
         await connection.start();
+        console.assert(connection.state === signalR.HubConnectionState.Connected);
         console.log("SignalR Connected.");
     } catch (err) {
+        console.assert(connection.state === signalR.HubConnectionState.Disconnected);
         console.log(err);
-        setTimeout(start, 5000);
+        setTimeout(() => start(), 5000);
     }
 };
 
@@ -26,18 +32,18 @@ connection.onclose(async () => {
 });
 
 connection.on("newMessage", (values, numCarsDict) => {
-    var lights = {"t1": ["north", "south"], "t2": ["south, east"]};
-    var state_to_color = {0: "Red", 1:"Green"};
-    var laneNames = {"east_t2": "East to West", "west_t2": "West to East",
-                    "north_t1": "North to South", "south_t1": "South to North"}
-
     for (const [lightId, directions] of Object.entries(lights)){
-        for (var i = 0; i < xs.length; i++){
+        for (var i = 0; i < directions.length; i++){
             var direction = directions[i];
             var lightElem = document.getElementById(`light_${direction}_${lightId}`);
+            if (typeof(Storage) != "undefined"){
+                localStorage.setItem(`light_${direction}_${lightId}`, state_to_color[values[lightId]]);
+            }
             var oppositeDirection = directions[1 - i];
             var content = document.createTextNode(`${direction} to ${oppositeDirection} is ${state_to_color[values[lightId]]}`);
-            lightElem.innerHTML = ``;
+            if (lightElem.innerHTML != null){
+                lightElem.innerHTML = ``;
+            }
             var fontElem = document.createElement("font");
             fontElem.appendChild(content);
             fontElem.setAttribute("color", state_to_color[values[lightId]].toLowerCase());
@@ -58,24 +64,80 @@ connection.on("newMessage", (values, numCarsDict) => {
     var laneDiv = document.getElementById("lanes");
     for (const [laneId, numCars] of Object.entries(numCarsDict)){
         laneElem = laneDiv.querySelector(`#${laneId}`);
-        laneElem.s
         if (laneElem == null){
             laneElem = document.createElement("h2");
             laneElem.setAttribute("id", laneId);
             laneDiv.appendChild(laneElem);
         }
         else{
-            laneElem.innerHTML = ``;
+            if (laneElem.innerHTML != null){
+                laneElem.innerHTML = ``;
+            }
+        }
+        if (typeof(Storage) != "undefined"){
+            localStorage.setItem(laneId, numCars);
         }
         laneElem.setAttribute("class", "lane_info");
-        laneElem.setAttribute("color", )       
         laneElem.appendChild(document.createTextNode(`${laneNames[laneId]}\n${numCars} 🚗`));
     }
 });
 
+
+function loadPreviousData(){
+    if (typeof(Storage) == "undefined"){
+        console.log("localStorage is not supported");
+        return;
+    }
+    console.log("localStorage is supported!");
+    for (const [lightId, directions] of Object.entries(lights)){
+        for (var i = 0; i < directions.length; i++){
+            var direction = directions[i];
+            var color = localStorage.getItem(`light_${direction}_${lightId}`);
+            if (color == null){ // was not previously stored
+                console.log(`color is not stored for light_${direction}_${lightId}`);
+                continue;
+            }
+            var direction = directions[i];
+            var lightElem = document.getElementById(`light_${direction}_${lightId}`);
+            console.log(`lightElem = ${lightElem}, light_${direction}_${lightId}`);
+            var oppositeDirection = directions[1 - i];
+            var content = document.createTextNode(`${direction} to ${oppositeDirection} is ${color}`);
+            if (lightElem.innerHTML != null){
+                lightElem.innerHTML = ``;
+            }            var fontElem = document.createElement("font");
+            fontElem.appendChild(content);
+            fontElem.setAttribute("color", color.toLowerCase());
+            lightElem.appendChild(fontElem);
+        }
+    }
+
+    var laneDiv = document.getElementById("lanes");
+    for (const laneId of laneIds){
+        var numCars = localStorage.getItem(laneId);
+        if (numCars == null){ // was not previously stored
+            continue;
+        }
+        laneElem = laneDiv.querySelector(`#${laneId}`);
+        if (laneElem == null){
+            laneElem = document.createElement("h2");
+            laneElem.setAttribute("id", laneId);
+            laneDiv.appendChild(laneElem);
+        }
+        else{
+            if (laneElem.innerHTML != null){
+                laneElem.innerHTML = ``;
+            }
+        }
+        laneElem.setAttribute("class", "lane_info");
+        laneElem.appendChild(document.createTextNode(`${laneNames[laneId]}\n${numCars} 🚗`));
+    }
+}
+
 async function main() {
     // start the signalR connection
-    start()
+    start();
+
+    loadPreviousData();
     
 }
 

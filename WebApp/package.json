@@ -2,7 +2,7 @@
   "name": "web_app",
   "version": "1.0.0",
   "description": "",
-  "main": "get_plots.js",
+  "main": "dist/index.js",
   "dependencies": {
     "@azure/identity": "^1.5.0",
     "@azure/storage-blob": "^12.7.0",
@@ -10,6 +10,7 @@
     "azure-storage": "^2.10.4"
   },
   "devDependencies": {
+    "@types/dotenv": "^8.2.0",
     "parcel-bundler": "^1.12.3"
   },
   "scripts": {

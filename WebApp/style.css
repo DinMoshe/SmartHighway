@@ -1,10 +1,9 @@
 /* A Free Design by Bryant Smith (bryantsmith.com) */
 
-#lanes .lane_info, #lights .lane_info{
+#lights .light_info{
 	position: relative;
-	margin-right: 20px;
 	margin-top: 20px;
-	top: 0;
+	margin-left: 20px;
 	background: '#ecf0f1';
 	width: 70;
 	text-align: 'center';
@@ -12,6 +11,11 @@
 	border-radius: 5;
 	border: '1px solid #ddd';
 	float: left;
+}
+
+#lanes .lane_info{
+	float: auto;
+	position: relative;
 }
 
 #trafficPlots .plot_design{
@@ -120,6 +124,7 @@ width:458px;
 background-repeat:no-repeat;
 text-align:center;
 float:left;
+position: relative;
 }
 
 
@@ -143,16 +148,22 @@ font-size:18px;
 
 #main .main_right
 {
-padding-left:0px;
-height:auto;
-width:458px;
-/* background-image:url(main_body.png); */
-background-repeat:repeat-y;
-color:#FFFFFF;
-padding-bottom:20px;
-float:left;
-left: 50px;
-position: relative;
+	padding-left:0px;
+	height:auto;
+	width:458px;
+	/* background-image:url(main_body.png); */
+	background-repeat:repeat-y;
+	color:#FFFFFF;
+	padding-bottom:20px;
+	float:left;
+	left: 50px;
+	position: relative;
+	margin-bottom: 30px;
+}
+
+#main .text_style, #main_right .text_style{
+	font-size: large;
+	margin-bottom: 5px;
 }
 
 #main .main_right h2

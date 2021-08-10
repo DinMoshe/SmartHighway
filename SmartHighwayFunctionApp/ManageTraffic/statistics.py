@@ -8,9 +8,8 @@ from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient, _
 from azure.core.exceptions import ResourceExistsError
 
 
-# for sending images
-website_token = '1740115349:AAG07QZupB1h6bsghlzsItPg9z29Rv8gArU'
-chat_id = '1347275938'
+lane_names = {"east_t2": "East to West", "west_t2": "West to East",
+                    "north_t1": "North to South", "south_t1": "South to North"}
 
 # load the data collected so far
 JSON_NAME = 'plot_json.json'
@@ -81,7 +80,7 @@ def add_data_points(num_car_dict):
 # lane id is the id, lane_data is the data we want to plot
 def plot_density(lane_id, lane_data):
     x = np.arange(len(lane_data))
-    plt.title(f"Number of Cars in {lane_id.replace('_', ' ').title()} Along Time")
+    plt.title(f"Number of Cars in {lane_names[lane_id]} Along Time")
     plt.xlabel("time")
     plt.ylabel("number of cars")
     plt.plot(x, lane_data)
