@@ -1,69 +1,15 @@
 const { BlobServiceClient } = require("@azure/storage-blob");
-import * as signalR from "@microsoft/signalr";
-
-const accountName = "storageaccounttraffafbc";
+// const accountName = "storageaccounttraffafbc";
 const containerName = "plots";
-const negotiateUrl = "http://localhost:7071/api/";
 
-const connection = new signalR.HubConnectionBuilder()
-    .withUrl(`${negotiateUrl}`)
-    // .withAutomaticReconnect()
-    .configureLogging(signalR.LogLevel.Information)
-    .build();
-
-
-async function start() {
-    try {
-        await connection.start();
-        console.log("SignalR Connected.");
-    } catch (err) {
-        console.log(err);
-        setTimeout(start, 5000);
-    }
-};
-
-
-connection.onclose(async () => {
-        await start();
-});
-
-connection.on("newMessage", (values, num_cars_dict) => {
-    var t1 = document.getElementById("t1");
-    var t2 = document.getElementById("t2");
-    
-    var state_to_color = {0: "Red", 1:"Green"};
-    var t1_content = document.createTextNode(`${state_to_color[values["t1"]]}`);
-    var t2_content = document.createTextNode(`${state_to_color[values["t2"]]}`);
-
-    t1.innerHTML = '';
-    t2.innerHTML = '';
-    t1.appendChild(t1_content);
-    t2.appendChild(t2_content);
-
-    var laneDiv = document.getElementById("lanes");
-
-    for (const [lane_id, num_cars] of Object.entries(num_cars_dict)){
-        laneElem = laneDiv.querySelector(`#${lane_id}`);
-        if (laneElem == null){
-            laneElem = document.createElement("li");
-            laneDiv.appendChild(laneElem);
-        }
-        else{
-            laneElem.innerHTML = ``;
-        }
-        laneElem.appendChild(document.createTextNode(`${num_cars}`));
-    }
-});
-
-async function main() {
-    // start the signalR connection
-    start()
-
+async function main(){
     console.log('Azure Blob storage v12 - JavaScript quickstart sample');
 
     // Quick start code goes here
 
-    const blobSasUrl = "https://storageaccounttraffafbc.blob.core.windows.net/?sv=2020-08-04&ss=bfqt&srt=sco&sp=rwdlacupix&se=2021-08-11T22:18:39Z&st=2021-08-07T14:18:39Z&spr=https,http&sig=EeZPm16sfxVvP2KVCWxo0wRxPJoxil0uNq%2F0bhLe2tQ%3D";
+    // const blobSasUrl = "https://storageaccounttraffafbc.blob.core.windows.net/?sv=2020-08-10&ss=bfqt&srt=sco&sp=rwdlacupix&se=2021-08-11T22:18:39Z&st=2021-08-07T14:18:39Z&spr=https,http&sig=EeZPm16sfxVvP2KVCWxo0wRxPJoxil0uNq%2F0bhLe2tQ%3D";
+    const blobSasUrl = "https://storageaccounttraffafbc.blob.core.windows.net/?sv=2020-08-04&ss=bfqt&srt=sco&sp=rwdlacupx&se=2021-08-12T00:11:15Z&st=2021-08-10T16:11:15Z&spr=https,http&sig=%2FO5aQZbZzfzJM%2F1akc6A5Buvp2o0uT45AUjuzrdRFeo%3D";
+
     // Create the BlobServiceClient object which will be used to create a container client
     const blobServiceClient = new BlobServiceClient(blobSasUrl);
 
@@ -72,7 +18,8 @@ async function main() {
 
     console.log('\nListing blobs...');
 
-    var divPlots = document.getElementById("trafficPlots")
+    var divPlots = document.getElementById("trafficPlots");
+    divPlots.innerHTML = ``;
     // List the blob(s) in the container.
     for await (const blob of containerClient.listBlobsFlat()) {
         console.log('\n', blob.name);
@@ -85,10 +32,10 @@ async function main() {
 
         var img = document.createElement("img");
         img.setAttribute("src", uri);
+        img.setAttribute("class", "plot_design");
 
         divPlots.appendChild(img);
     }
-    
 }
 
 window.onload = function() {
