@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <title>IOT Project</title>
+    <script src="./signalr_connect.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.7/signalr.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <div id="page">
+		
+        <div id="header">
+            <ul>
+           	   	<li><a href="index.html">Home</a></li>
+               	<li><a href="stats.html">Statistics</a></li>
+                <li><a href="doc.html">Documantation</a></li>
+                <li><a href="sources.html">Source</a></li>
+            </ul>
+           
+        </div>
+  <div class="dotted_line"></div>
+        <div id="main">
+        
+        	<div class="main_left">
+            	<!-- <img src="sample_image.jpg" alt="Transparent Blue by BryantSmith.com" /> -->
+                <img src="crossroad_good.png" width="500" height="300"></img>
+
+            </div>
+            
+           	<div class="main_right" >
+                <h2>Run the Simulation</h2>
+                <button id="simulateBtn">Simulation</button>
+
+                <!-- the presentation of the simulation -->
+                <div id="lights"> 
+                    <h2 id="light_north_t1" class="lane_info">20 cars</h2>
+                    <h2 id="light_south_t1" class="lane_info">21 cars</h2>
+                    <h2 id="light_east_t2" class="lane_info">22 cars</h2>
+                    <h2 id="light_west_t2" class="lane_info">23 cars</h2>
+                </div>
+                  
+                <div id="lanes">
+                    <h2 id="north_t1" class="lane_info">n_t1 🚗</h2>
+                    <h2 id="south_t1" class="lane_info">s_t1🚗</h2>
+                    <h2 id="east_t2" class="lane_info">🚗</h2>
+                    <h2 id="west_t2" class="lane_info">🚗</h2>
+                </div>
+
+                <!-- <table style="width:100%">
+                    <tr>
+                      <th id=>North to South</th>
+                      <th>South to North</th>
+                      <th>Age</th>
+                    </tr>
+
+                </table> -->
+
+            </div>
+            
+           	<div class="main_bottom"></div>
+            
+        </div>
+        
+        
+        <div class="dotted_line"></div>
+        
+
+  </div>
+
+
+
+</body>
+</html>
