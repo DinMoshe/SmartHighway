@@ -1,13 +1,65 @@
 const { BlobServiceClient } = require("@azure/storage-blob");
+import * as signalR from "@microsoft/signalr";
 
 const accountName = "storageaccounttraffafbc";
 const containerName = "plots";
+const negotiateUrl = "http://localhost:7071/api/";
+
+const connection = new signalR.HubConnectionBuilder()
+    .withUrl(`${negotiateUrl}`)
+    // .withAutomaticReconnect()
+    .configureLogging(signalR.LogLevel.Information)
+    .build();
+
+
+async function start() {
+    try {
+        await connection.start();
+        console.log("SignalR Connected.");
+    } catch (err) {
+        console.log(err);
+        setTimeout(start, 5000);
+    }
+};
+
+
+connection.onclose(async () => {
+        await start();
+});
+
+connection.on("newMessage", (values, num_cars_dict) => {
+    var t1 = document.getElementById("t1");
+    var t2 = document.getElementById("t2");
+    
+    var state_to_color = {0: "Red", 1:"Green"};
+    var t1_content = document.createTextNode(`${state_to_color[values["t1"]]}`);
+    var t2_content = document.createTextNode(`${state_to_color[values["t2"]]}`);
+
+    t1.innerHTML = '';
+    t2.innerHTML = '';
+    t1.appendChild(t1_content);
+    t2.appendChild(t2_content);
+
+    var laneDiv = document.getElementById("lanes");
+
+    for (const [lane_id, num_cars] of Object.entries(num_cars_dict)){
+        laneElem = laneDiv.querySelector(`#${lane_id}`);
+        if (laneElem == null){
+            laneElem = document.createElement("li");
+            laneDiv.appendChild(laneElem);
+        }
+        else{
+            laneElem.innerHTML = ``;
+        }
+        laneElem.appendChild(document.createTextNode(`${num_cars}`));
+    }
+});
 
 async function main() {
+    // start the signalR connection
+    start()
+
     console.log('Azure Blob storage v12 - JavaScript quickstart sample');
-
-
-
 
     // Quick start code goes here
 
@@ -30,9 +82,6 @@ async function main() {
         // Get a block blob client
         const blobClient = containerClient.getBlobClient(blob.name);
         var uri = blobClient.url;
-
-        //var img = new Image();
-        //img.src = uri;
 
         var img = document.createElement("img");
         img.setAttribute("src", uri);

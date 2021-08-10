@@ -4,6 +4,8 @@
 <html>
   <head>
     <script src="/get_plots.615532ba.js"></script>
+    <!-- <script src="~/lib/signalr/signalr.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.7/signalr.min.js"></script>
 </head>
   <body>
     <!-- <input type="button" id='script' name="scriptbutton" value=" Run Script " onclick="goPython()">
@@ -35,7 +37,16 @@
 
     
     <button id="myButton">Set images</button>
+
+    <div id="lights"> 
+      <li id="t1"> </li>
+      <li id="t2"> </li>
+    </div>
     
+    <div id="lanes">
+
+    </div>
+
     <div id="trafficPlots">
       <!-- <img src="https://storageaccounttraffafbc.blob.core.windows.net/plots/east_t2_plot.png" /> -->
     </div>

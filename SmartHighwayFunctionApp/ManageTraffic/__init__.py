@@ -299,5 +299,5 @@ def main(documents: func.DocumentList, signalRMessages: func.Out[str]) -> None:
     signalr_values = {green_light_id: 1, red_light_id: 0}
     signalRMessages.set(json.dumps({
         'target': 'newMessage',
-        'arguments': [ signalr_values ]
+        'arguments': [ signalr_values, num_car_dict ]
     }))

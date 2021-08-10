@@ -81,7 +81,9 @@ def add_data_points(num_car_dict):
 # lane id is the id, lane_data is the data we want to plot
 def plot_density(lane_id, lane_data):
     x = np.arange(len(lane_data))
-    plt.title(f"Data about {lane_id}")
+    plt.title(f"Number of Cars in {lane_id.replace('_', ' ').title()} Along Time")
+    plt.xlabel("time")
+    plt.ylabel("number of cars")
     plt.plot(x, lane_data)
     plt.savefig(f"{lane_id}_plot.png")
     plt.clf()
