@@ -3,7 +3,7 @@ import azure.functions as func
 from azure.cosmos import exceptions, CosmosClient, PartitionKey
 from .consts import *
 from .traffic_classes import *
-from azure.storage.table import TableService
+from azure.cosmosdb.table.tableservice import TableService
 import json
 import numpy as np
 from .statistics import *
@@ -293,11 +293,12 @@ def main(documents: func.DocumentList, signalRMessages: func.Out[str]) -> None:
     
     # create plots of the occupancy and density
     num_car_dict = get_occupancy_dicts()
-    create_plots(num_car_dict)
-    send_images()
     
     signalr_values = {green_light_id: 1, red_light_id: 0}
     signalRMessages.set(json.dumps({
         'target': 'newMessage',
         'arguments': [ signalr_values, num_car_dict ]
     }))
+
+    create_plots(num_car_dict)
+    send_images()

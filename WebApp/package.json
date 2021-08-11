@@ -7,16 +7,18 @@
     "@azure/identity": "^1.5.0",
     "@azure/storage-blob": "^12.7.0",
     "@microsoft/signalr": "^5.0.8",
-    "azure-storage": "^2.10.4"
+    "azure-storage": "^2.10.4",
+    "browserify": "^17.0.0"
   },
   "devDependencies": {
-    "@types/dotenv": "^8.2.0",
     "parcel-bundler": "^1.12.3"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "parcel ./index.html",
-    "prod": "parcel build ./index.html"
+    "prod": "parcel build ./index.html",
+    "add_require": "browserify signalr_connect.js -o bundle_signalr_connect.js",
+    "add_require2": "browserify get_plots.js -o bundle_get_plots.js"
   },
   "keywords": [],
   "author": "",

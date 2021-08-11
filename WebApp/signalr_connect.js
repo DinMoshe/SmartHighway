@@ -1,7 +1,9 @@
-import * as signalR from "@microsoft/signalr";
+// import * as signalR from "@microsoft/signalr";
 
-const negotiateUrl = "http://localhost:7071/api";
-// const negotiateUrl = "https://smarthighwayfunctionapp.azurewebsites.net/api";
+const signalR = require("@microsoft/signalr");
+
+// const negotiateUrl = "http://localhost:7071/api";
+const negotiateUrl = "https://smarthighwayfunctionapp.azurewebsites.net/api";
 const lights = {"t1": ["north", "south"], "t2": ["west", "east"]};
 const state_to_color = {0: "Red", 1:"Green"};
 const laneIds = ["north_t1", "south_t1", "east_t2", "west_t2"];
@@ -9,10 +11,16 @@ const laneNames = {"east_t2": "East to West", "west_t2": "West to East",
                     "north_t1": "North to South", "south_t1": "South to North"};
 
 const connection = new signalR.HubConnectionBuilder()
-    .withUrl(`${negotiateUrl}`)
+    .withUrl(`${negotiateUrl}`, 
+    {
+		skipNegotiation: true,
+		transport: signalR.HttpTransportType.WebSockets
+    })
     .withAutomaticReconnect()
     .configureLogging(signalR.LogLevel.Information)
     .build();
+
+connection.Headers
 
 async function start() {
     try {
@@ -62,7 +70,8 @@ connection.on("newMessage", (values, numCarsDict) => {
     // t2.appendChild(t2_content);
 
     var laneDiv = document.getElementById("lanes");
-    for (const [laneId, numCars] of Object.entries(numCarsDict)){
+    for (const laneId of laneIds){
+        var numCars = numCarsDict[laneId]
         laneElem = laneDiv.querySelector(`#${laneId}`);
         if (laneElem == null){
             laneElem = document.createElement("h2");
@@ -78,7 +87,7 @@ connection.on("newMessage", (values, numCarsDict) => {
             localStorage.setItem(laneId, numCars);
         }
         laneElem.setAttribute("class", "lane_info");
-        laneElem.appendChild(document.createTextNode(`${laneNames[laneId]}\n${numCars} 🚗`));
+        laneElem.appendChild(document.createTextNode(`${laneNames[laneId]}: ${numCars} 🚗`));
     }
 });
 
@@ -142,12 +151,19 @@ async function main() {
 }
 
 function simulate(){
-    var simulateUrl = "http://localhost:7071/api/Simulate";
-    // var simulateUrl = "https://smarthighwayfunctionapp.azurewebsites.net/api/Simulate?";
+    // var simulateUrl = "http://localhost:7071/api/Simulate";
+    var simulateUrl = "https://smarthighwayfunctionapp.azurewebsites.net/api/Simulate?";
+    console.log("starting to simulate...");
     $.ajax(simulateUrl, {
     type: 'GET',
     data: {
       num_times: 1
+    },
+    success: function (data, status, xhr) {   // success callback function
+        console.log(data + " " + status);
+    },
+    error: function (jqXhr, textStatus, errorMessage) { // error callback 
+        console.log('Error: ' + errorMessage);
     }
   });
 }

@@ -8281,7 +8281,8 @@ connection.on("newMessage", (values, numCarsDict) => {
 
   var laneDiv = document.getElementById("lanes");
 
-  for (const [laneId, numCars] of Object.entries(numCarsDict)) {
+  for (const laneId of laneIds) {
+    var numCars = numCarsDict[laneId];
     laneElem = laneDiv.querySelector(`#${laneId}`);
 
     if (laneElem == null) {
@@ -8299,7 +8300,7 @@ connection.on("newMessage", (values, numCarsDict) => {
     }
 
     laneElem.setAttribute("class", "lane_info");
-    laneElem.appendChild(document.createTextNode(`${laneNames[laneId]}\n${numCars} 🚗`));
+    laneElem.appendChild(document.createTextNode(`${laneNames[laneId]}: ${numCars} 🚗`));
   }
 });
 
@@ -8416,7 +8417,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52591" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65349" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

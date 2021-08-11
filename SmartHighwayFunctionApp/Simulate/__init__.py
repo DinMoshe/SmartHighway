@@ -8,8 +8,8 @@ import random
 from threading import Thread
 
 lane_ids = ["east_t2", "west_t2", "north_t1", "south_t1"]
-url_process_video = "http://localhost:7071/api/ProcessVideo"
-# url_process_video = "https://smarthighwayfunctionapp.azurewebsites.net/api/ProcessVideo?"
+# url_process_video = "http://localhost:7071/api/ProcessVideo"
+url_process_video = "https://smarthighwayfunctionapp.azurewebsites.net/api/ProcessVideo?"
 dir_path = "./videos"
 
 
@@ -31,12 +31,12 @@ def simulate(num_times):
     for i in range(num_times):
         for lane_id in lane_ids:
             # to use threading uncomment theses lines:
-            t = Thread(target=simulate_lane, args=(lane_id,))
-            threads.append(t)
-            t.start()
+            # t = Thread(target=simulate_lane, args=(lane_id,))
+            # threads.append(t)
+            # t.start()
 
             # serial execution
-            # simulate_lane(lane_id)
+            simulate_lane(lane_id)
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:

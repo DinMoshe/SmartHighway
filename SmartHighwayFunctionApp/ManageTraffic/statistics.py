@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 from azure.cosmos import exceptions, CosmosClient, PartitionKey
-from azure.storage.table import TableService
+from azure.cosmosdb.table.tableservice import TableService
 import numpy as np
 import json
 import requests
