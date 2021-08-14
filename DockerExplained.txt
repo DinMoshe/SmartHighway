@@ -23,9 +23,14 @@ Then execute step 1 again.
 
 6. To log in to the registry in azure do the following:
 in cmd:
-    docker login trafficregistry.azurecr.io
+	docker login trafficregistry.azurecr.io
 the username is TrafficRegistry.
 To get the password, in azure:
     az acr credential show --name TrafficRegistry
 last password:
-    ZwJZg/6wIKXbrSZV2F=fUfI20wcPtxME
+	ZwJZg/6wIKXbrSZV2F=fUfI20wcPtxME
+	c2bi/Z2DsnXqpENp3KTZGzhwsQcSyzLA
+
+
+To create web app:
+	az webapp up --location eastus --name smart-highway-web-app --html --sku B1 --resource-group dinmoshe_rg_Windows_eastus

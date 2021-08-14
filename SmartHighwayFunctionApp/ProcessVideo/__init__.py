@@ -258,7 +258,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 		num_moving_cars = len(moving_cars)
 		num_cars = len(speed)
 		upsert_item(container=container, doc_id=lane_id, num_moving_cars=num_moving_cars, num_cars=num_cars) # update the DB
-		return func.HttpResponse(body=json.dumps({'average_speed': average_speed, "num_moving_cars": num_moving_cars, "num_cars": num_cars}), status_code=200)
+		return func.HttpResponse(body=json.dumps({'average_speed': average_speed, "num_moving_cars": num_moving_cars, "num_cars": num_cars}),
+								status_code=200,
+								headers={'Access-Control-Allow-Origin': '*'}
+								)
 
 
 	# these lines probably don't do anything
@@ -275,7 +278,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 		video = cv2.VideoCapture(os.path.join("..", file_output_name))
 		average_speed = trackMultipleObjects(video)
 		logging.info(f"average speed = {average_speed}")
-		return func.HttpResponse(body={'average_speed': average_speed}, status_code=200)
+		return func.HttpResponse(body={'average_speed': average_speed}, status_code=200, headers={'Access-Control-Allow-Origin': '*'})
 	else:
 		return func.HttpResponse(
              "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.",

@@ -5905,8 +5905,6 @@ process.chdir = function (dir) {
 process.umask = function() { return 0; };
 
 },{}],28:[function(require,module,exports){
-// import * as signalR from "@microsoft/signalr";
-
 const signalR = require("@microsoft/signalr");
 
 // const negotiateUrl = "http://localhost:7071/api";
@@ -5916,6 +5914,7 @@ const state_to_color = {0: "Red", 1:"Green"};
 const laneIds = ["north_t1", "south_t1", "east_t2", "west_t2"];
 const laneNames = {"east_t2": "East to West", "west_t2": "West to East",
                     "north_t1": "North to South", "south_t1": "South to North"};
+
 
 const connection = new signalR.HubConnectionBuilder()
     .withUrl(`${negotiateUrl}`)
@@ -5943,6 +5942,12 @@ connection.onclose(async () => {
 });
 
 connection.on("newMessage", (values, numCarsDict) => {
+    // delete the message saying to wait
+    var msgElem = document.getElementById("message_to_user");
+    if (msgElem != null && msgElem.innerHTML != null){
+        msgElem.innerHTML = ``;
+    }
+
     for (const [lightId, directions] of Object.entries(lights)){
         for (var i = 0; i < directions.length; i++){
             var direction = directions[i];
@@ -5961,16 +5966,6 @@ connection.on("newMessage", (values, numCarsDict) => {
             lightElem.appendChild(fontElem);
         }
     }
-    // var t1_north = document.getElementById("light_north_t1");
-    // var t2 = document.getElementById("t2");
-    
-    // var t1_content = document.createTextNode(`North to South and South to North is ${state_to_color[values["t1"]]}`);
-    // var t2_content = document.createTextNode(`East to West and West to East is ${state_to_color[values["t2"]]}`);
-
-    // t1.innerHTML = '';
-    // t2.innerHTML = '';
-    // t1.appendChild(t1_content);
-    // t2.appendChild(t2_content);
 
     var laneDiv = document.getElementById("lanes");
     for (const laneId of laneIds){
@@ -6043,6 +6038,10 @@ function loadPreviousData(){
         laneElem.setAttribute("class", "lane_info");
         laneElem.appendChild(document.createTextNode(`${laneNames[laneId]}\n${numCars} 🚗`));
     }
+    var msgElem = document.getElementById("message_to_user");
+    if (msgElem != null && msgElem.innerHTML != null){
+        msgElem.innerHTML = ``;
+    }
 }
 
 async function main() {
@@ -6057,10 +6056,24 @@ function simulate(){
     // var simulateUrl = "http://localhost:7071/api/Simulate";
     var simulateUrl = "https://smarthighwayfunctionapp.azurewebsites.net/api/Simulate?";
     console.log("starting to simulate...");
+    var messageElem = document.getElementById("message_to_user");
+    if (messageElem != null){
+        if (messageElem.innerHTML != null){
+            messageElem.innerHTML = ``;
+        }
+        messageElem.appendChild(document.createTextNode("Simulating... Please don't exit."));
+
+    }
     $.ajax(simulateUrl, {
     type: 'GET',
     data: {
       num_times: 1
+    },
+    success: function (data, status, xhr) {   // success callback function
+        console.log(data + " " + status);
+    },
+    error: function (jqXhr, textStatus, errorMessage) { // error callback 
+        console.log('Error: ' + errorMessage);
     }
   });
 }
